@@ -61,7 +61,7 @@ public class TradingServer {
         return result;
     }
 
-    public void createOrder(String orderId, Order order){
+    public void createOrder(Order order){
         Stock stock = stocks.get("D");
         if(stock.price == order.price && stock.units >= order.quantity) {
             if(order.type == "B"){
@@ -74,7 +74,7 @@ public class TradingServer {
                 stocks.put("D", stock);
             }
         } else {
-            orders.put(orderId, order);
+            orders.put(order.orderId, order);
         }
     }
 

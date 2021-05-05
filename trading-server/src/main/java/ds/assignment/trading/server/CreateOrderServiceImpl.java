@@ -35,8 +35,8 @@ public class CreateOrderServiceImpl extends CreateOrderServiceGrpc.CreateOrderSe
         if(server.isLeader()) {
             try {
                 System.out.println("Creating Order as Primary");
-                createTradeOrder(orderId, newOrder);
-                updateSecondaryServers(orderId, newOrder);
+                createTradeOrder(newOrder);
+                updateSecondaryServers(newOrder);
                 status = true;
             }catch (Exception e) {
                 System.out.println("Error while creating the order" + e.getMessage());
@@ -45,9 +45,9 @@ public class CreateOrderServiceImpl extends CreateOrderServiceGrpc.CreateOrderSe
         } else {
             if(request.getIsSentByPrimary()) {
                 System.out.println("Creating order on secondary, on Primary's command");
-                createTradeOrder(orderId, newOrder);
+                createTradeOrder(newOrder);
             } else {
-                CreateOrderResponse response = callPrimary(orderId, newOrder);
+                CreateOrderResponse response = callPrimary(newOrder);
                 if(response.getStatus()) {
                     status = true;
                 }
@@ -56,11 +56,11 @@ public class CreateOrderServiceImpl extends CreateOrderServiceGrpc.CreateOrderSe
 
     }
 
-    private void createTradeOrder(String orderId, Order order){
-        server.createOrder(orderId, order);
+    private void createTradeOrder(Order order){
+        server.createOrder(order);
     }
 
-    private CreateOrderResponse callServer(String orderId, Order order, boolean isSentByPrimary, String IPAddress, int port) {
+    private CreateOrderResponse callServer(Order order, boolean isSentByPrimary, String IPAddress, int port) {
         System.out.println("Call Server " + IPAddress + ":" + port);
         channel = ManagedChannelBuilder.forAddress(IPAddress, port).usePlaintext().build();
         clientStub = CreateOrderServiceGrpc.newBlockingStub(channel);
@@ -78,21 +78,21 @@ public class CreateOrderServiceImpl extends CreateOrderServiceGrpc.CreateOrderSe
         return response;
     }
 
-    private CreateOrderResponse callPrimary(String orderId, Order order) {
+    private CreateOrderResponse callPrimary(Order order) {
         System.out.println("Calling Primary server");
         String[] currentLeaderData = server.getCurrentLeaderData();
         String IPAddress = currentLeaderData[0];
         int port = Integer.parseInt(currentLeaderData[1]);
-        return callServer(orderId, order, false, IPAddress, port);
+        return callServer(order, false, IPAddress, port);
     }
 
-    private void updateSecondaryServers(String orderId, Order order) throws KeeperException, InterruptedException {
+    private void updateSecondaryServers(Order order) throws KeeperException, InterruptedException {
         System.out.println("Updating secondary servers");
         List<String[]> othersData = server.getOthersData();
         for (String[] data : othersData) {
             String IPAddress = data[0];
             int port = Integer.parseInt(data[1]);
-            callServer(orderId, order, true, IPAddress, port);
+            callServer(order, true, IPAddress, port);
         }
     }
 }
