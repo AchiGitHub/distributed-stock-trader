@@ -1,0 +1,3 @@
+ds/assignment/trading/synchronizer/lock/MainProcess.class
+ds/assignment/trading/synchronizer/lock/ZooKeeperClient.class
+ds/assignment/trading/synchronizer/lock/DistributedLock.class
