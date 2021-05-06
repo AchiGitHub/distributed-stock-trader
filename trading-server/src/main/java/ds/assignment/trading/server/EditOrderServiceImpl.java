@@ -16,7 +16,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
         this.server = server;
     }
 
-    public void createOrder(ds.assignment.trading.grpc.generated.EditOrderRequest request,
+    public void editOrder(ds.assignment.trading.grpc.generated.EditOrderRequest request,
                             io.grpc.stub.StreamObserver<ds.assignment.trading.grpc.generated.EditOrderResponse> responseObserver) {
         String orderId = request.getOrderId();
         String symbol = request.getSymbol();
@@ -36,7 +36,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
                 updateSecondaryServers(newOrder);
                 status = true;
             }catch (Exception e) {
-                System.out.println("Error while creating the order" + e.getMessage());
+                System.out.println("Error while editing the order" + e.getMessage());
                 e.printStackTrace();
             }
         } else {
