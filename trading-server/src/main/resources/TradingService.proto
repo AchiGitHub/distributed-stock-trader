@@ -18,3 +18,20 @@ message CreateOrderResponse {
 service CreateOrderService {
   rpc createOrder(CreateOrderRequest) returns (CreateOrderResponse);
 }
+
+message EditOrderRequest {
+  string orderId = 1;
+  string symbol = 2;
+  double price = 3;
+  string type = 4;
+  int32 quantity = 5;
+  bool isSentByPrimary = 6;
+}
+
+message EditOrderResponse {
+  bool status = 1;
+}
+
+service EditOrderService {
+  rpc editOrder(EditOrderRequest) returns (EditOrderResponse);
+}
