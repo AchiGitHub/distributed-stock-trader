@@ -11,8 +11,13 @@ public class Main {
             System.exit(1);
         }
 
-        if("CO".equals(operation)){
+        if("CO".equals(operation))  {
             CreateOrderServiceClient client = new CreateOrderServiceClient(host, port);
+            client.initializeConnection();
+            client.processUserRequest();
+            client.closeConnection();
+        } else if("EO".equals(operation)) {
+            EditOrderServiceClient client = new EditOrderServiceClient(host, port);
             client.initializeConnection();
             client.processUserRequest();
             client.closeConnection();

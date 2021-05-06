@@ -20,4 +20,5 @@
 /Users/achinthaikiriwatte/Desktop/MSC/Semester III/Concurrent Distributed Systems/Assignment 2/Stock Trading System/trading-client/src/main/java/ds/assignment/trading/client/CreateOrderServiceClient.java
 /Users/achinthaikiriwatte/Desktop/MSC/Semester III/Concurrent Distributed Systems/Assignment 2/Stock Trading System/trading-client/target/generated-sources/protobuf/grpc-java/ds/assignment/trading/grpc/generated/CreateOrderServiceGrpc.java
 /Users/achinthaikiriwatte/Desktop/MSC/Semester III/Concurrent Distributed Systems/Assignment 2/Stock Trading System/trading-client/target/generated-sources/protobuf/java/ds/assignment/trading/grpc/generated/EditOrderResponse.java
+/Users/achinthaikiriwatte/Desktop/MSC/Semester III/Concurrent Distributed Systems/Assignment 2/Stock Trading System/trading-client/src/main/java/ds/assignment/trading/client/EditOrderServiceClient.java
 /Users/achinthaikiriwatte/Desktop/MSC/Semester III/Concurrent Distributed Systems/Assignment 2/Stock Trading System/trading-client/target/generated-sources/protobuf/java/ds/assignment/trading/grpc/generated/CreateOrderRequest.java

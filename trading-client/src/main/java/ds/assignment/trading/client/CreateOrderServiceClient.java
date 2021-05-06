@@ -50,7 +50,7 @@ public class CreateOrderServiceClient {
                 .setIsSentByPrimary(false)
                 .build();
         CreateOrderResponse response = clientStub.createOrder(request);
-        System.out.printf("Transaction Status " + (response.getStatus() ? "Successful" : "Failed"));
+        System.out.printf("Create Order Status " + (response.getStatus() ? "Successful" : "Failed"));
         Thread.sleep(1000);
     }
 

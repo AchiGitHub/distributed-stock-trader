@@ -32,7 +32,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
         //Act as Primary
         if(server.isLeader()) {
             try {
-                System.out.println("Creating Order as Primary");
+                System.out.println("Editing Order as Primary");
                 editTradeOrder(newOrder);
                 updateSecondaryServers(newOrder);
                 status = true;
@@ -42,7 +42,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
             }
         } else {
             if(request.getIsSentByPrimary()) {
-                System.out.println("Creating order on secondary, on Primary's command");
+                System.out.println("Editing order on secondary, on Primary's command");
                 editTradeOrder(newOrder);
             } else {
                 EditOrderResponse response = callPrimary(newOrder);
