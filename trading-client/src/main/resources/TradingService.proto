@@ -1,0 +1,64 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package ds.assignment.trading.grpc.generated;
+
+message CreateOrderRequest {
+  string orderId = 1;
+  string symbol = 2;
+  double price = 3;
+  string type = 4;
+  int32 quantity = 5;
+  bool isSentByPrimary = 6;
+}
+
+message CreateOrderResponse {
+  bool status = 1;
+}
+
+service CreateOrderService {
+  rpc createOrder(CreateOrderRequest) returns (CreateOrderResponse);
+}
+
+message EditOrderRequest {
+  string orderId = 1;
+  string symbol = 2;
+  double price = 3;
+  string type = 4;
+  int32 quantity = 5;
+  bool isSentByPrimary = 6;
+}
+
+message EditOrderResponse {
+  bool status = 1;
+}
+
+service EditOrderService {
+  rpc editOrder(EditOrderRequest) returns (EditOrderResponse);
+}
+
+message DeleteOrderRequest {
+  string orderId = 1;
+  bool isSentByPrimary = 2;
+}
+
+message DeleteOrderResponse {
+  bool status = 1;
+}
+
+service DeleteOrderService {
+  rpc deleteOrder(DeleteOrderRequest) returns (DeleteOrderResponse);
+}
+
+message SetStockRequest {
+  double price = 1;
+  int32 units = 2;
+  bool isSentByPrimary = 3;
+}
+
+message SetStockResponse {
+  bool status = 1;
+}
+
+service SetStockService {
+  rpc setStock(SetStockRequest) returns (SetStockResponse);
+}
