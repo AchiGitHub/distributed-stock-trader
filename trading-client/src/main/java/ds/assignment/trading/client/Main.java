@@ -21,6 +21,11 @@ public class Main {
             client.initializeConnection();
             client.processUserRequest();
             client.closeConnection();
+        } else if("DO".equals(operation)) {
+            DeleteOrderServiceClient client = new DeleteOrderServiceClient(host, port);
+            client.initializeConnection();
+            client.processUserRequests();
+            client.closeConnection();
         }
     }
 }

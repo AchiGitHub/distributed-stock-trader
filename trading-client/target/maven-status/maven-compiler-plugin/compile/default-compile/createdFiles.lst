@@ -37,6 +37,7 @@ ds/assignment/trading/grpc/generated/EditOrderServiceGrpc$EditOrderServiceBlocki
 ds/assignment/trading/grpc/generated/DeleteOrderServiceGrpc.class
 ds/assignment/trading/grpc/generated/DeleteOrderResponse$1.class
 ds/assignment/trading/grpc/generated/TradingService.class
+ds/assignment/trading/client/DeleteOrderServiceClient.class
 ds/assignment/trading/grpc/generated/SetStockServiceGrpc$SetStockServiceBlockingStub.class
 ds/assignment/trading/grpc/generated/EditOrderServiceGrpc$EditOrderServiceBaseDescriptorSupplier.class
 ds/assignment/trading/grpc/generated/EditOrderServiceGrpc$EditOrderServiceMethodDescriptorSupplier.class
