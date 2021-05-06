@@ -48,3 +48,17 @@ message DeleteOrderResponse {
 service DeleteOrderService {
   rpc deleteOrder(DeleteOrderRequest) returns (DeleteOrderResponse);
 }
+
+message SetStockRequest {
+  double price = 1;
+  int32 units = 2;
+  bool isSentByPrimary = 3;
+}
+
+message SetStockResponse {
+  bool status = 1;
+}
+
+service SetStockService {
+  rpc setStock(SetStockRequest) returns (SetStockResponse);
+}

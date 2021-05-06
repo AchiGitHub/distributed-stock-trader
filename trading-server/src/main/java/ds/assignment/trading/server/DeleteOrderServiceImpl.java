@@ -20,6 +20,7 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
         this.server = server;
     }
 
+    @Override
     public void deleteOrder(ds.assignment.trading.grpc.generated.DeleteOrderRequest request,
                             io.grpc.stub.StreamObserver<ds.assignment.trading.grpc.generated.DeleteOrderResponse> responseObserver) {
         String orderId = request.getOrderId();
@@ -30,7 +31,7 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
             // Act as primary
             try {
                 System.out.println("Deleting Order as Primary");
-                deleteOrder(orderId);
+                deleteTradeOrder(orderId);
                 updateSecondaryServers(orderId);
                 status = true;
             } catch (Exception e) {
@@ -41,7 +42,7 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
             // Act As Secondary
             if (request.getIsSentByPrimary()) {
                 System.out.println("Deleting Order on secondary, on Primary's command");
-                deleteOrder(orderId);
+                deleteTradeOrder(orderId);
             } else {
                 DeleteOrderResponse response = callPrimary(orderId);
                 if (response.getStatus()) {
@@ -54,7 +55,7 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
         responseObserver.onCompleted();
     }
 
-    private void deleteOrder(String orderId) {
+    private void deleteTradeOrder(String orderId) {
         server.deleteOrder(orderId);
         System.out.println("Order Deleted -  " + orderId);
     }

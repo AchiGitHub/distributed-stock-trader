@@ -6,10 +6,7 @@ import io.grpc.ServerBuilder;
 import org.apache.zookeeper.KeeperException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TradingServer {
@@ -86,12 +83,45 @@ public class TradingServer {
         orders.remove(orderId);
     }
 
+    public void setStock(double price, int units) {
+        Stock stock = stocks.get("D");
+        stock.setPrice(price);
+        stock.setUnits(units);
+
+        //check if orders are available satisfying the price
+        Iterator it = orders.entrySet().iterator();
+
+        while(it.hasNext()){
+            Map.Entry pair = (Map.Entry)it.next();
+            Order order = (Order) pair.getValue();
+            checkOrders(order, stock);
+            it.remove();
+        }
+    }
+
+    //check the order list which has matching orders for new stock
+    private void checkOrders(Order order, Stock stock) {
+        if(stock.price == order.price && stock.units >= order.quantity) {
+            if(order.type == "B"){
+                successfulOrders.put(order.orderId, order);
+                stock.setUnits(stock.units - order.quantity);
+                stocks.put("D", stock);
+            } else if(order.type == "S") {
+                successfulOrders.put(order.orderId, order);
+                stock.setUnits(stock.units + order.quantity);
+                stocks.put("D", stock);
+            }
+            orders.remove(order.orderId);
+        }
+    }
+
     public void startServer() throws IOException, InterruptedException, KeeperException {
         Server server = ServerBuilder
                 .forPort(serverPort)
                 .addService(new CreateOrderServiceImpl(this))
                 .addService(new EditOrderServiceImpl(this))
                 .addService(new DeleteOrderServiceImpl(this))
+                .addService(new SetStockServiceImpl(this))
                 .build();
         server.start();
         System.out.println("Trading Server Started and ready to accept requests on port " + serverPort);

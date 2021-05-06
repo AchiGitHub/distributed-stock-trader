@@ -16,6 +16,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
         this.server = server;
     }
 
+    @Override
     public void editOrder(ds.assignment.trading.grpc.generated.EditOrderRequest request,
                             io.grpc.stub.StreamObserver<ds.assignment.trading.grpc.generated.EditOrderResponse> responseObserver) {
         String orderId = request.getOrderId();

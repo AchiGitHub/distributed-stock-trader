@@ -44,6 +44,16 @@ public final class TradingService {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_ds_assignment_trading_grpc_generated_DeleteOrderResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ds_assignment_trading_grpc_generated_SetStockRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ds_assignment_trading_grpc_generated_SetStockRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ds_assignment_trading_grpc_generated_SetStockResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ds_assignment_trading_grpc_generated_SetStockResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -65,19 +75,25 @@ public final class TradingService {
       "rderResponse\022\016\n\006status\030\001 \001(\010\">\n\022DeleteOr" +
       "derRequest\022\017\n\007orderId\030\001 \001(\t\022\027\n\017isSentByP" +
       "rimary\030\002 \001(\010\"%\n\023DeleteOrderResponse\022\016\n\006s" +
-      "tatus\030\001 \001(\0102\231\001\n\022CreateOrderService\022\202\001\n\013c" +
-      "reateOrder\0228.ds.assignment.trading.grpc." +
-      "generated.CreateOrderRequest\0329.ds.assign" +
-      "ment.trading.grpc.generated.CreateOrderR" +
-      "esponse2\220\001\n\020EditOrderService\022|\n\teditOrde" +
-      "r\0226.ds.assignment.trading.grpc.generated" +
-      ".EditOrderRequest\0327.ds.assignment.tradin" +
-      "g.grpc.generated.EditOrderResponse2\231\001\n\022D" +
-      "eleteOrderService\022\202\001\n\013deleteOrder\0228.ds.a" +
-      "ssignment.trading.grpc.generated.DeleteO" +
-      "rderRequest\0329.ds.assignment.trading.grpc" +
-      ".generated.DeleteOrderResponseB\002P\001b\006prot" +
-      "o3"
+      "tatus\030\001 \001(\010\"H\n\017SetStockRequest\022\r\n\005price\030" +
+      "\001 \001(\001\022\r\n\005units\030\002 \001(\005\022\027\n\017isSentByPrimary\030" +
+      "\003 \001(\010\"\"\n\020SetStockResponse\022\016\n\006status\030\001 \001(" +
+      "\0102\231\001\n\022CreateOrderService\022\202\001\n\013createOrder" +
+      "\0228.ds.assignment.trading.grpc.generated." +
+      "CreateOrderRequest\0329.ds.assignment.tradi" +
+      "ng.grpc.generated.CreateOrderResponse2\220\001" +
+      "\n\020EditOrderService\022|\n\teditOrder\0226.ds.ass" +
+      "ignment.trading.grpc.generated.EditOrder" +
+      "Request\0327.ds.assignment.trading.grpc.gen" +
+      "erated.EditOrderResponse2\231\001\n\022DeleteOrder" +
+      "Service\022\202\001\n\013deleteOrder\0228.ds.assignment." +
+      "trading.grpc.generated.DeleteOrderReques" +
+      "t\0329.ds.assignment.trading.grpc.generated" +
+      ".DeleteOrderResponse2\214\001\n\017SetStockService" +
+      "\022y\n\010setStock\0225.ds.assignment.trading.grp" +
+      "c.generated.SetStockRequest\0326.ds.assignm" +
+      "ent.trading.grpc.generated.SetStockRespo" +
+      "nseB\002P\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -118,6 +134,18 @@ public final class TradingService {
     internal_static_ds_assignment_trading_grpc_generated_DeleteOrderResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ds_assignment_trading_grpc_generated_DeleteOrderResponse_descriptor,
+        new java.lang.String[] { "Status", });
+    internal_static_ds_assignment_trading_grpc_generated_SetStockRequest_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_ds_assignment_trading_grpc_generated_SetStockRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ds_assignment_trading_grpc_generated_SetStockRequest_descriptor,
+        new java.lang.String[] { "Price", "Units", "IsSentByPrimary", });
+    internal_static_ds_assignment_trading_grpc_generated_SetStockResponse_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_ds_assignment_trading_grpc_generated_SetStockResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ds_assignment_trading_grpc_generated_SetStockResponse_descriptor,
         new java.lang.String[] { "Status", });
   }
 
