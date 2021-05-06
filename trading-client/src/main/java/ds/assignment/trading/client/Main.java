@@ -26,6 +26,11 @@ public class Main {
             client.initializeConnection();
             client.processUserRequests();
             client.closeConnection();
+        } else if("AS".equals(operation)) {
+            SetStockServiceClient client = new SetStockServiceClient(host, port);
+            client.initializeConnection();
+            client.processUserRequests();
+            client.closeConnection();
         }
     }
 }

@@ -49,6 +49,7 @@ ds/assignment/trading/grpc/generated/EditOrderServiceGrpc$EditOrderServiceImplBa
 ds/assignment/trading/grpc/generated/CreateOrderRequest$1.class
 ds/assignment/trading/grpc/generated/CreateOrderServiceGrpc$3.class
 ds/assignment/trading/grpc/generated/CreateOrderServiceGrpc$CreateOrderServiceFutureStub.class
+ds/assignment/trading/client/SetStockServiceClient.class
 ds/assignment/trading/grpc/generated/SetStockServiceGrpc$SetStockServiceFileDescriptorSupplier.class
 ds/assignment/trading/client/Main.class
 ds/assignment/trading/grpc/generated/DeleteOrderRequest$1.class
