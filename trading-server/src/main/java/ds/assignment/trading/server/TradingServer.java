@@ -82,14 +82,19 @@ public class TradingServer {
         createOrder(order);
     }
 
+    public void deleteOrder(String orderId) {
+        orders.remove(orderId);
+    }
+
     public void startServer() throws IOException, InterruptedException, KeeperException {
         Server server = ServerBuilder
                 .forPort(serverPort)
                 .addService(new CreateOrderServiceImpl(this))
                 .addService(new EditOrderServiceImpl(this))
+                .addService(new DeleteOrderServiceImpl(this))
                 .build();
         server.start();
-        System.out.println("BankServer Started and ready to accept requests on port " + serverPort);
+        System.out.println("Trading Server Started and ready to accept requests on port " + serverPort);
 
         tryToBeLeader();
         server.awaitTermination();

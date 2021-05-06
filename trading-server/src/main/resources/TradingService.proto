@@ -35,3 +35,16 @@ message EditOrderResponse {
 service EditOrderService {
   rpc editOrder(EditOrderRequest) returns (EditOrderResponse);
 }
+
+message DeleteOrderRequest {
+  string orderId = 1;
+  bool isSentByPrimary = 2;
+}
+
+message DeleteOrderResponse {
+  bool status = 1;
+}
+
+service DeleteOrderService {
+  rpc deleteOrder(DeleteOrderRequest) returns (DeleteOrderResponse);
+}

@@ -24,7 +24,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
         String type = request.getType();
         int quantity = request.getQuantity();
 
-        Order newOrder = new Order(orderId ,symbol, type, price, quantity);
+        Order newOrder = new Order(orderId, symbol, type, price, quantity);
 
         boolean status = false;
 
@@ -35,7 +35,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
                 editTradeOrder(newOrder);
                 updateSecondaryServers(newOrder);
                 status = true;
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("Error while editing the order" + e.getMessage());
                 e.printStackTrace();
             }
@@ -50,6 +50,9 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
                 }
             }
         }
+        EditOrderResponse response = EditOrderResponse.newBuilder().setStatus(status).build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     private void editTradeOrder(Order order){

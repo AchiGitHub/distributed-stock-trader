@@ -53,11 +53,14 @@ public class CreateOrderServiceImpl extends CreateOrderServiceGrpc.CreateOrderSe
                 }
             }
         }
-
+        CreateOrderResponse response = CreateOrderResponse.newBuilder().setStatus(status).build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     private void createTradeOrder(Order order){
         server.createOrder(order);
+        System.out.println("Order " + order.orderId + " created! ");
     }
 
     private CreateOrderResponse callServer(Order order, boolean isSentByPrimary, String IPAddress, int port) {
