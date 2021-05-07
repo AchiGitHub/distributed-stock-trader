@@ -1,3 +1,7 @@
 ds/assignment/trading/synchronizer/lock/MainProcess.class
+ds/assignment/trading/synchronizer/lock/tx/DistributedTx.class
+ds/assignment/trading/synchronizer/lock/tx/DistributedTxListener.class
 ds/assignment/trading/synchronizer/lock/ZooKeeperClient.class
+ds/assignment/trading/synchronizer/lock/tx/DistributedTxParticipant.class
 ds/assignment/trading/synchronizer/lock/DistributedLock.class
+ds/assignment/trading/synchronizer/lock/tx/DistributedTxCoordinator.class

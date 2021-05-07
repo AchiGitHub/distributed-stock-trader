@@ -42,5 +42,13 @@ public class ZooKeeperClient {
     public void addWatch(String path) throws KeeperException, InterruptedException {
         zooKeeper.exists(path, true);
     }
+
+    public void write(String path, byte[] data) throws
+            KeeperException, InterruptedException {
+    }
+
+    public void forceDelete(String path) throws KeeperException, InterruptedException {
+        ZKUtil.deleteRecursive(zooKeeper, path);
+    }
 }
 
