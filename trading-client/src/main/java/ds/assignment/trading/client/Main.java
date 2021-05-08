@@ -7,7 +7,7 @@ public class Main {
         String operation = args[2];
 
         if(args.length != 3) {
-            System.out.println("Usage <host> <port> <s(et)|c(heck)");
+            System.out.println("Usage <host> <port> <CO(Create Order) | EO(Edit Order) | DO(Delete Order) | AS(Admin Stock)>");
             System.exit(1);
         }
 

@@ -3,21 +3,38 @@ package ds.assignment.trading.server;
 import ds.assignment.trading.grpc.generated.DeleteOrderRequest;
 import ds.assignment.trading.grpc.generated.DeleteOrderResponse;
 import ds.assignment.trading.grpc.generated.DeleteOrderServiceGrpc;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxCoordinator;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxListener;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxParticipant;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.zookeeper.KeeperException;
 
+import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.UUID;
 
-public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderServiceImplBase {
+public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderServiceImplBase implements DistributedTxListener {
 
     private TradingServer server;
     private ManagedChannel channel = null;
     DeleteOrderServiceGrpc.DeleteOrderServiceBlockingStub clientStub = null;
+    private String tempDataHolder;
+    private boolean transactionStatus = false;
 
 
     public DeleteOrderServiceImpl(TradingServer server) {
         this.server = server;
+    }
+
+    private void startDistributedTx(String orderId) {
+        try {
+            server.getCreateOrderTransaction().start(orderId, String.valueOf(UUID.randomUUID()));
+            tempDataHolder = orderId;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -25,15 +42,19 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
                             io.grpc.stub.StreamObserver<ds.assignment.trading.grpc.generated.DeleteOrderResponse> responseObserver) {
         String orderId = request.getOrderId();
         System.out.println("Request Received...");
-        boolean status = false;
 
         if(server.isLeader()) {
             // Act as primary
             try {
                 System.out.println("Deleting Order as Primary");
-                deleteTradeOrder(orderId);
+                startDistributedTx(orderId);
                 updateSecondaryServers(orderId);
-                status = true;
+                System.out.println("going to perform");
+                if (orderId != null){
+                    ((DistributedTxCoordinator)server.getDeleteOrderTransaction()).perform();
+                } else {
+                    ((DistributedTxCoordinator)server.getDeleteOrderTransaction()).sendGlobalAbort();
+                }
             } catch (Exception e) {
                 System.out.println("Error while Deleting Order" + e.getMessage());
                 e.printStackTrace();
@@ -42,15 +63,20 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
             // Act As Secondary
             if (request.getIsSentByPrimary()) {
                 System.out.println("Deleting Order on secondary, on Primary's command");
-                deleteTradeOrder(orderId);
+                startDistributedTx(orderId);
+                if (orderId != null) {
+                    ((DistributedTxParticipant)server.getDeleteOrderTransaction()).voteCommit();
+                } else {
+                    ((DistributedTxParticipant)server.getDeleteOrderTransaction()).voteAbort();
+                }
             } else {
                 DeleteOrderResponse response = callPrimary(orderId);
                 if (response.getStatus()) {
-                    status = true;
+                    transactionStatus = true;
                 }
             }
         }
-        DeleteOrderResponse response = DeleteOrderResponse.newBuilder().setStatus(status).build();
+        DeleteOrderResponse response = DeleteOrderResponse.newBuilder().setStatus(transactionStatus).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -90,5 +116,25 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
             int port = Integer.parseInt(data[1]);
             callServer(orderId, true, IPAddress, port);
         }
+    }
+
+    private void deleteOrderUpdate() {
+        if (tempDataHolder != null) {
+            String orderId = tempDataHolder;
+            server.deleteOrder(orderId);
+            System.out.println("Order " + orderId + " Deleted!");
+            tempDataHolder = null;
+        }
+    }
+
+    @Override
+    public void onGlobalCommit() {
+        deleteOrderUpdate();
+    }
+
+    @Override
+    public void onGlobalAbort() {
+        tempDataHolder = null;
+        System.out.println("Transaction Aborted by the Coordinator");
     }
 }

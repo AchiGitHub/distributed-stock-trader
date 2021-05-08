@@ -3,19 +3,36 @@ package ds.assignment.trading.server;
 import ds.assignment.trading.grpc.generated.SetStockRequest;
 import ds.assignment.trading.grpc.generated.SetStockResponse;
 import ds.assignment.trading.grpc.generated.SetStockServiceGrpc;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxCoordinator;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxListener;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxParticipant;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.zookeeper.KeeperException;
 
+import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.UUID;
 
-public class SetStockServiceImpl extends SetStockServiceGrpc.SetStockServiceImplBase {
+public class SetStockServiceImpl extends SetStockServiceGrpc.SetStockServiceImplBase implements DistributedTxListener {
     private ManagedChannel channel = null;
     SetStockServiceGrpc.SetStockServiceBlockingStub clientStub = null;
     private TradingServer server;
+    private AbstractMap.SimpleEntry<Double, Integer> tempDataHolder;
+    private boolean transactionStatus = false;
 
     public SetStockServiceImpl(TradingServer server) {
         this.server = server;
+    }
+
+    private void startDistributedTx(double price, int units) {
+        try {
+            server.getSetStockTransaction().start("D", String.valueOf(UUID.randomUUID()));
+            tempDataHolder = new AbstractMap.SimpleEntry<>(price, units);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -24,15 +41,18 @@ public class SetStockServiceImpl extends SetStockServiceGrpc.SetStockServiceImpl
         double price = request.getPrice();
         int units = request.getUnits();
 
-        boolean status = false;
-
         if (server.isLeader()){
             // Act as primary
             try {
                 System.out.println("Updating Stock as Primary");
-                setTradingStock(price, units);
+                startDistributedTx(price, units);
                 updateSecondaryServers(price, units);
-                status = true;
+                System.out.println("going to perform");
+                if (price > 0) {
+                    ((DistributedTxCoordinator)server.getSetStockTransaction()).perform();
+                } else {
+                    ((DistributedTxCoordinator)server.getSetStockTransaction()).sendGlobalAbort();
+                }
             } catch (Exception e) {
                 System.out.println("Error while updating the stock" + e.getMessage());
                 e.printStackTrace();
@@ -41,15 +61,20 @@ public class SetStockServiceImpl extends SetStockServiceGrpc.SetStockServiceImpl
             // Act As Secondary
             if (request.getIsSentByPrimary()) {
                 System.out.println("Updating Stock on secondary, on Primary's command");
-                setTradingStock(price, units);
+                startDistributedTx(price, units);
+                if (price > 0){
+                    ((DistributedTxParticipant)server.getSetStockTransaction()).voteCommit();
+                } else {
+                    ((DistributedTxParticipant)server.getSetStockTransaction()).voteAbort();
+                }
             } else {
                 SetStockResponse response = callPrimary(price, units);
                 if (response.getStatus()) {
-                    status = true;
+                    transactionStatus = true;
                 }
             }
         }
-        SetStockResponse response = SetStockResponse.newBuilder().setStatus(status).build();
+        SetStockResponse response = SetStockResponse.newBuilder().setStatus(transactionStatus).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -89,6 +114,26 @@ public class SetStockServiceImpl extends SetStockServiceGrpc.SetStockServiceImpl
             String IPAddress = data[0];
             int port = Integer.parseInt(data[1]);
             callServer(price, units, true, IPAddress, port);
+        }
+    }
+
+    @Override
+    public void onGlobalCommit() {
+        setStockUpdate();
+    }
+
+    @Override
+    public void onGlobalAbort() {
+        tempDataHolder = null;
+        System.out.println("Transaction Aborted by the Coordinator");
+    }
+
+    private void setStockUpdate() {
+        if (tempDataHolder != null) {
+            double price = tempDataHolder.getKey();
+            int units = tempDataHolder.getValue();
+            setTradingStock(price, units);
+            tempDataHolder = null;
         }
     }
 }

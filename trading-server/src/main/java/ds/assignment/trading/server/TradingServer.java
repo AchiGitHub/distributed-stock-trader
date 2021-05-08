@@ -1,6 +1,9 @@
 package ds.assignment.trading.server;
 
 import ds.assignment.trading.synchronizer.lock.DistributedLock;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTx;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxCoordinator;
+import ds.assignment.trading.synchronizer.lock.tx.DistributedTxParticipant;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.apache.zookeeper.KeeperException;
@@ -18,11 +21,47 @@ public class TradingServer {
     private Map<String, Stock> stocks = new HashMap();
     private Map<String, Order> successfulOrders = new HashMap();
 
+    DistributedTx createOrderTransaction;
+    DistributedTx editOrderTransaction;
+    DistributedTx deleteOrderTransaction;
+    DistributedTx setStockTransaction;
+
+    CreateOrderServiceImpl createOrderService;
+    EditOrderServiceImpl editOrderService;
+    DeleteOrderServiceImpl deleteOrderService;
+    SetStockServiceImpl setStockService;
+
     public TradingServer(String host, int port) throws IOException, InterruptedException, KeeperException {
         Stock stock = new Stock("Dodge", 200, 900000);
         stocks.put("D", stock);
         this.serverPort = port;
         leaderLock = new DistributedLock("TradingCluster", buildServerData(host, port));
+
+        createOrderService = new CreateOrderServiceImpl(this);
+        editOrderService = new EditOrderServiceImpl(this);
+        deleteOrderService = new DeleteOrderServiceImpl(this);
+        setStockService = new SetStockServiceImpl(this);
+
+        createOrderTransaction = new DistributedTxParticipant(createOrderService);
+        editOrderTransaction = new DistributedTxParticipant(editOrderService);
+        deleteOrderTransaction = new DistributedTxParticipant(deleteOrderService);
+        setStockTransaction = new DistributedTxParticipant(setStockService);
+    }
+
+    public DistributedTx getCreateOrderTransaction() {
+        return createOrderTransaction;
+    }
+
+    public DistributedTx getEditOrderTransaction() {
+        return editOrderTransaction;
+    }
+
+    public DistributedTx getDeleteOrderTransaction() {
+        return deleteOrderTransaction;
+    }
+
+    public DistributedTx getSetStockTransaction() {
+        return setStockTransaction;
     }
 
     public static String buildServerData(String IP, int port) {
@@ -118,10 +157,10 @@ public class TradingServer {
     public void startServer() throws IOException, InterruptedException, KeeperException {
         Server server = ServerBuilder
                 .forPort(serverPort)
-                .addService(new CreateOrderServiceImpl(this))
-                .addService(new EditOrderServiceImpl(this))
-                .addService(new DeleteOrderServiceImpl(this))
-                .addService(new SetStockServiceImpl(this))
+                .addService(createOrderService)
+                .addService(editOrderService)
+                .addService(deleteOrderService)
+                .addService(setStockService)
                 .build();
         server.start();
         System.out.println("Trading Server Started and ready to accept requests on port " + serverPort);
@@ -130,8 +169,18 @@ public class TradingServer {
         server.awaitTermination();
     }
 
+    private void beTheLeader() {
+        System.out.println("I got the leader lock. Now acting as primary");
+        isLeader.set(true);
+        createOrderTransaction = new DistributedTxCoordinator(createOrderService);
+        editOrderTransaction = new DistributedTxCoordinator(editOrderService);
+        deleteOrderTransaction = new DistributedTxCoordinator(deleteOrderService);
+        setStockTransaction = new DistributedTxCoordinator(setStockService);
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException, KeeperException {
         DistributedLock.setZooKeeperURL("localhost:2181");
+        DistributedTx.setZooKeeperURL("localhost:2181");
 
         if(args.length != 1) {
             System.out.println("Usage executable-name <port>");
@@ -161,6 +210,7 @@ public class TradingServer {
                 System.out.println("I got the leader lock. Now acting as primary");
                 isLeader.set(true);
                 currentLeaderData = null;
+                beTheLeader();
             } catch (Exception e){
             }
         }

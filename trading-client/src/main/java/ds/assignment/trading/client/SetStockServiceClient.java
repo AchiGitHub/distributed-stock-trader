@@ -20,8 +20,7 @@ public class SetStockServiceClient {
     }
 
     public void initializeConnection () {
-        System.out.println("Initializing Connecting to server at " + host + ":" +
-                port);
+        System.out.println("Initializing Connecting to server at " + host + ":" + port);
         channel = ManagedChannelBuilder.forAddress("localhost", port)
                 .usePlaintext()
                 .build();
