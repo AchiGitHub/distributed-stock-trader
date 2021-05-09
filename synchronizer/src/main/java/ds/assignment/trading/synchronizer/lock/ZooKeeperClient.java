@@ -43,8 +43,8 @@ public class ZooKeeperClient {
         zooKeeper.exists(path, true);
     }
 
-    public void write(String path, byte[] data) throws
-            KeeperException, InterruptedException {
+    public void write(String path, byte[] data) throws KeeperException, InterruptedException {
+        zooKeeper.setData(path, data, -1);
     }
 
     public void forceDelete(String path) throws KeeperException, InterruptedException {

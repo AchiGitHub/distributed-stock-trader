@@ -15,9 +15,11 @@ public abstract class DistributedTx implements Watcher {
     String currentTransaction;
     ZooKeeperClient client;
     DistributedTxListener listener;
+
     public static void setZooKeeperURL(String url){
         zooKeeperUrl = url;
     }
+
     public DistributedTx(DistributedTxListener listener){
         this.listener = listener;
     }

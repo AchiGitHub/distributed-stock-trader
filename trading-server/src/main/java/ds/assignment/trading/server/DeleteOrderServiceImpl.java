@@ -30,7 +30,7 @@ public class DeleteOrderServiceImpl extends DeleteOrderServiceGrpc.DeleteOrderSe
 
     private void startDistributedTx(String orderId) {
         try {
-            server.getCreateOrderTransaction().start(orderId, String.valueOf(UUID.randomUUID()));
+            server.getDeleteOrderTransaction().start(orderId, String.valueOf(UUID.randomUUID()));
             tempDataHolder = orderId;
         } catch (IOException e) {
             e.printStackTrace();

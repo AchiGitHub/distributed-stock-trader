@@ -207,8 +207,6 @@ public class TradingServer {
                     Thread.sleep(10000);
                     leader = leaderLock.tryAcquireLock();
                 }
-                System.out.println("I got the leader lock. Now acting as primary");
-                isLeader.set(true);
                 currentLeaderData = null;
                 beTheLeader();
             } catch (Exception e){

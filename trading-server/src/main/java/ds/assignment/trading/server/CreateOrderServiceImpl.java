@@ -135,6 +135,7 @@ public class CreateOrderServiceImpl extends CreateOrderServiceGrpc.CreateOrderSe
         if (tempDataHolder != null) {
             Order order = tempDataHolder.getValue();
             server.createOrder(order);
+            System.out.println("Order " + order.orderId + " is created!");
             tempDataHolder = null;
         }
     }

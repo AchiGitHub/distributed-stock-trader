@@ -136,6 +136,7 @@ public class EditOrderServiceImpl extends EditOrderServiceGrpc.EditOrderServiceI
         if (tempDataHolder != null) {
             Order order = tempDataHolder.getValue();
             server.editOrder(order);
+            System.out.println("Order " + order.orderId + " is Edited!");
             tempDataHolder = null;
         }
     }

@@ -133,6 +133,7 @@ public class SetStockServiceImpl extends SetStockServiceGrpc.SetStockServiceImpl
             double price = tempDataHolder.getKey();
             int units = tempDataHolder.getValue();
             setTradingStock(price, units);
+            System.out.println("Stock D is Updated!");
             tempDataHolder = null;
         }
     }
