@@ -97,6 +97,7 @@ public class TradingServer {
         return result;
     }
 
+    //check if the order satisfy the price and units, if so order will be successful else kept in order book
     public void createOrder(Order order){
         Stock stock = stocks.get("D");
         if(stock.price == order.price && stock.units >= order.quantity) {
@@ -115,11 +116,29 @@ public class TradingServer {
     }
 
     public void editOrder(Order order) {
-        createOrder(order);
+        editUpdateOrder(order);
     }
 
     public void deleteOrder(String orderId) {
         orders.remove(orderId);
+    }
+
+    public void editUpdateOrder(Order order){
+        Stock stock = stocks.get("D");
+        if(stock.price == order.price && stock.units >= order.quantity) {
+            if(order.type == "B"){
+                successfulOrders.put(order.orderId, order);
+                stock.setUnits(stock.units-order.quantity);
+                orders.remove(order.orderId);
+                stocks.put("D", stock);
+            } else if(order.type == "S") {
+                successfulOrders.put(order.orderId, order);
+                stock.setUnits(stock.units+order.quantity);
+                stocks.put("D", stock);
+            }
+        } else {
+            orders.put(order.orderId, order);
+        }
     }
 
     public void setStock(double price, int units) {
